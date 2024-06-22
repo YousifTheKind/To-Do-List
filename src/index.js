@@ -1,4 +1,4 @@
-import {createTodo, createProject, myTodos, myProjects} from './create'
+import {createTask, createProject, myTasks, myProjects} from './create'
 
 const title = "some task";
 const description = "some description";
@@ -7,7 +7,7 @@ const priority = "urgent";
 const projectName = "some project";
 const status = "unchecked";
 
-const newTodo = createTodo(title, description, doDate, priority, projectName, status);
+const newTodo = createTask(title, description, doDate, priority, projectName, status);
 
 const newProject = createProject(projectName)
 

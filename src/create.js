@@ -1,8 +1,8 @@
-export {createTodo, createProject, myTodos, myProjects};
+export {createTask, createProject, myTasks, myProjects};
 
-const [myTodos, myProjects] = [[], []];
+const [myTasks, myProjects] = [[], []];
 
-const createTodo = (title, description, doDate, priority, project, status) => {
+const createTask = (title, description, doDate, priority, project, status) => {
     return {title, description, doDate, priority, project, status}
 };
 
