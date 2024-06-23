@@ -1,5 +1,5 @@
 import { myProjects, myTasks } from "./create";
-export {addToMyTasks, addToMyProjects, changePriority, changeStatus, deleteTask, updateLists};
+export { addToMyTasks, addToMyProjects, changePriority, changeStatus, deleteTask, updateLists, deleteProject };
 
 const addToMyTasks = (task) => {
     myTasks.push(task)
@@ -10,8 +10,26 @@ const addToMyProjects = (project) => {
 };
 
 const updateLists = () => {
+    // reset all project tasks
+    // for(const key in myProjects) {
+    //     myProjects[key] = [];
+    // };
+    
+    for (let i = 0; i < myTasks.length; i++) {
+        const task = myTasks[i];
+        const projects = Object.keys(myProjects);
 
+        if (projects.includes(task.project)) {
+            let projectMatch = projects.find(title => title == task.project);
+            myProjects[projectMatch].push(task);
+        }
+        // if the project got deleted
+        else if(!projects.includes(task.project)) {
+            console.log("task was assigned to project that was deleted");
+        };
+    };
 };
+
 const changePriority = () => {
 
 };
@@ -19,5 +37,8 @@ const changeStatus = () => {
 
 };
 const deleteTask = () => {
+
+};
+const deleteProject = () => {
 
 };

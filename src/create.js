@@ -1,4 +1,4 @@
-export {createTask, createProject, myTasks, myProjects};
+export { createTask, createProject, myTasks, myProjects };
 const myTasks = [];
 const myProjects = {};
 
