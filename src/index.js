@@ -1,4 +1,5 @@
-import {createTask, createProject, myTasks, myProjects} from './create'
+import {createTask, createProject, myTasks, myProjects} from './create.js';
+import {addToMyTasks, addToMyProjects, updateLists} from './listsController';
 
 const title = "some task";
 const description = "some description";
@@ -7,9 +8,16 @@ const priority = "urgent";
 const projectName = "some project";
 const status = "unchecked";
 
-const newTodo = createTask(title, description, doDate, priority, projectName, status);
+const newTask = createTask(title, description, doDate, priority, projectName, status);
 
-const newProject = createProject(projectName)
+const newProject = createProject(projectName);
+const anotherProject = createProject("some other project");
 
-console.log(newTodo);
-console.log(newProject);
+addToMyTasks(newTask);
+
+addToMyProjects(newProject);
+addToMyProjects(anotherProject);
+
+updateLists()
+console.log("my tasks: " + myTasks);
+console.log( myProjects);
