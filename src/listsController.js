@@ -30,14 +30,14 @@ const updateLists = () => {
     };
 };
 
-const changePriority = () => {
-
+const changePriority = (task, newPriority) => {
+    task.priority = newPriority;
 };
-const changeStatus = () => {
-
+const changeStatus = (task) => {
+    if(task.status == "unchecked") task.status = "checked";
 };
 const deleteTask = () => {
-
+    
 };
 const deleteProject = () => {
 
