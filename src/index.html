@@ -6,6 +6,74 @@
     <title>To-Do List</title>
 </head>
 <body>
+    <div class="container">
+        <nav class="sidebar">
+            <button class="add-task">Add Task</button>
+            <button class="inbox">Inbox</button>
+
+            <div class="my-projects">
+                <div class="my-projects-btn-container">
+                    <span>My Projects:</span>
+                    <button class="add-project">+<div class="add-project-icon"></div></button>
+                </div>
+                <ul class="project-list">
+                    <li>Demo Project</li>
+                </ul>
+            </div>
+        </nav>
+        <div class="main">
+            <div class="current-view">
+                <p class="project-name">Inbox</p>
+                <ul class="task-list">
+                    <li>
+                        <div class="task-item">
+                            <div>Check Mark</div>
+                            <div>task title</div>
+                            <div>Due Date</div>
+                            <div>Edit Button</div>
+                            <div>Delete Button</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <dialog class="task-dialog">
+            <form action="" id="add-task-form">
+                <fieldset>
+                    <legend>Task Details</legend>
+                    <label for="title">Add Task:</label>
+                    <input type="text" id="title" required placeholder="Task name">
     
+                    <label for="description">Description:</label>
+                    <input type="text" id="description" required placeholder="description">    
+                </fieldset>
+    
+                <fieldset>    
+                    <label for="project">Choose a project:</label>
+                    <select id="project" name="projects" form="add-task-form">
+                        <option value="inbox" selected="selected">Inbox</option>
+                    </select>
+
+                    <label for="priority">Choose a priority:</label>
+                    <select id="priority" name="priority" form="add-task-form">
+                        <option value="P1">P1</option>
+                        <option value="P2">P2</option>
+                        <option value="P3">P3</option>
+                        <option value="P4">P4</option>
+                    </select>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Select a "Do" Date</legend>
+                    <label for="do-date">Do date:</label>
+                    <input type="date" id="do-date" name="do-date">                  
+                </fieldset>
+    
+                <button class="task-confirm-btn">Confirm</button>
+                <button class="cancel=btn" formmethod="dialog" formnovalidate>Cancel</button>
+            </form>
+        </dialog>
+    </div>
 </body>
 </html>

@@ -15,16 +15,15 @@ const updateLists = () => {
     //     myProjects[key] = [];
     // };
     
-    for (let i = 0; i < myTasks.length; i++) {
-        const task = myTasks[i];
+    for (const task of myTasks) {
         const projects = Object.keys(myProjects);
-
+        
         if (projects.includes(task.project)) {
             let projectMatch = projects.find(title => title == task.project);
             myProjects[projectMatch].push(task);
         }
         // if the project got deleted
-        else if(!projects.includes(task.project)) {
+        else {
             console.log("task was assigned to project that was deleted");
         };
     };

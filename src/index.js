@@ -1,7 +1,10 @@
+import './styles.css';
 import { createTask, createProject, myTasks, myProjects } from './create.js';
 import { addToMyTasks, addToMyProjects, updateLists, changePriority } from './listsController';
 import { compareAsc, format } from "date-fns";
+import { showForms } from './displayController.js';
 
+showForms();
 //default project
 const Inbox = createProject("Inbox");
 addToMyProjects(Inbox);
@@ -21,6 +24,5 @@ addToMyTasks(anotherTask);
 addToMyProjects(newProject);
 
 updateLists();
-changePriority(newTask, "not urgent")
 console.log( myTasks);
 console.log( myProjects);

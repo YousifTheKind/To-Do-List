@@ -1,0 +1,112 @@
+@font-face {
+    font-family: 'coolFont';
+    src: url('../assests/font/Outfit-VariableFont_wght.ttf'),
+    url('../assests/font/static/Outfit-Light.ttf');
+    font-style: normal;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --color-theme: #4f46e5;
+    --white: #f8fafc;
+}
+
+.container {
+    display: flex;
+    font-family: 'coolFont', sans-serif;
+    background-color: #ecfeff;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    max-width: 420px;
+    min-width: 280px;
+    height: 100vh;
+    background-color: #cbd5e1;
+    color: #0f172a;
+}
+
+dialog {
+    margin: auto;
+    padding: 10px;
+}
+#add-task-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+#add-task-form > fieldset {
+    padding: 10px;
+}
+.main {
+    display: flex;
+    flex: 1 1 0px;
+    justify-content: center;
+    align-items: center;
+}
+.current-view {
+    min-width: 42rem;
+    min-height: 32rem;
+    max-height: 48rem;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: #0f172a;
+    color: white;
+    text-align: center;
+}
+.my-projects {
+    display: flex;
+    margin-left: 20px;
+    flex-direction: column;
+    gap: 16px;
+}
+.project-name {
+    font-size: 2rem;
+}
+.add-project {
+    min-width: 36px;
+    margin-right: 20px;
+}
+.my-projects-btn-container{
+    display: flex;
+    justify-content: space-between;
+}
+
+.task-item {
+    display: flex;
+    gap: 1rem;
+}
+
+.add-task, .inbox {
+    min-height: 34px;
+    padding: 0 10px;
+    margin: 20px
+}
+
+.add-task:hover, .inbox:hover {
+  background-color: #F3F4F6;
+  text-decoration: none;
+  transition-duration: 0.1s;
+}
+
+.add-task:disabled, .inbox:disabled {
+  background-color: #FAFBFC;
+  border-color: rgba(27, 31, 35, 0.15);
+  cursor: default;
+}
+
+.add-task:active, .inbox:active {
+  background-color: #EDEFF2;
+  box-shadow: rgba(225, 228, 232, 0.2) 0 1px 0 inset;
+  transition: none 0s;
+}
+
+.add-task:focus, .inbox:focus {
+  outline: 1px transparent;
+}
