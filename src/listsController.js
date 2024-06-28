@@ -2,7 +2,7 @@ import { myProjects, myTasks } from "./create";
 export { addToMyTasks, addToMyProjects, changePriority, changeStatus, deleteTask, updateLists, deleteProject };
 
 const addToMyTasks = (task) => {
-    myTasks.push(task)
+    myTasks.push(task);
 };
 
 const addToMyProjects = (project) => {
@@ -11,9 +11,9 @@ const addToMyProjects = (project) => {
 
 const updateLists = () => {
     // reset all project tasks
-    // for(const key in myProjects) {
-    //     myProjects[key] = [];
-    // };
+    for(const key in myProjects) {
+        myProjects[key] = [];
+    };
     
     for (const task of myTasks) {
         const projects = Object.keys(myProjects);

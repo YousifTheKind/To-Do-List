@@ -42,7 +42,7 @@
             <form action="" id="add-task-form">
                 <fieldset>
                     <legend>Task Details</legend>
-                    <label for="title">Add Task:</label>
+                    <label for="title">Add title:</label>
                     <input type="text" id="title" required placeholder="Task name">
     
                     <label for="description">Description:</label>
@@ -52,7 +52,7 @@
                 <fieldset>    
                     <label for="project">Choose a project:</label>
                     <select id="project" name="projects" form="add-task-form">
-                        <option value="inbox" selected="selected">Inbox</option>
+                        <option value="Inbox" selected="selected">Inbox</option>
                     </select>
 
                     <label for="priority">Choose a priority:</label>
@@ -71,7 +71,20 @@
                 </fieldset>
     
                 <button class="task-confirm-btn">Confirm</button>
-                <button class="cancel=btn" formmethod="dialog" formnovalidate>Cancel</button>
+                <button formmethod="dialog" formnovalidate>Cancel</button>
+            </form>
+        </dialog>
+
+        <dialog class="project-dialog">
+            <form action="" id="add-project-form">
+                <fieldset>
+                    <legend>Project Details</legend>
+                    <label for="title">Add title:</label>
+                    <input type="text" id="title" required placeholder="Project name">
+                </fieldset>
+        
+                <button class="project-confirm-btn">Confirm</button>
+                <button formmethod="dialog" formnovalidate>Cancel</button>
             </form>
         </dialog>
     </div>

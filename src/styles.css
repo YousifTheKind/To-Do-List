@@ -44,6 +44,14 @@ dialog {
 #add-task-form > fieldset {
     padding: 10px;
 }
+#add-project-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+#add-project-form > fieldset {
+    padding: 10px;
+}
 .main {
     display: flex;
     flex: 1 1 0px;
