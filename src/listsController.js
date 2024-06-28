@@ -1,8 +1,12 @@
 import { myProjects, myTasks } from "./create";
+import { pubsub } from "./pubsub";
 export { addToMyTasks, addToMyProjects, changePriority, changeStatus, deleteTask, updateLists, deleteProject };
+
 
 const addToMyTasks = (task) => {
     myTasks.push(task);
+    pubsub.publish("myTasksUpdated", myTasks);
+    console.log(myTasks);
 };
 
 const addToMyProjects = (project) => {
@@ -41,3 +45,5 @@ const deleteTask = () => {
 const deleteProject = () => {
 
 };
+
+pubsub.subscribe("taskCreated", addToMyTasks);

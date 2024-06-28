@@ -1,4 +1,4 @@
-import { createTask } from "./create";
+import { pubsub } from "./pubsub";
 export { showFormClickListener, taskDetails }
 const taskDialog = document.querySelector(".task-dialog");
 const projectDialog = document.querySelector(".project-dialog");
@@ -36,6 +36,6 @@ taskConfirmBtn.addEventListener("click", (e) => {
     const status = "unchecked"
 
     taskDetails.push(title, description, project, priority, date, status);
-    createTask(taskDetails)
+    pubsub.publish("dataRecived", taskDetails);
     taskDialog.close();
 });
