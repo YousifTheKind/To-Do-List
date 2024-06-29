@@ -5,12 +5,12 @@ export { addToMyTasks, addToMyProjects, changePriority, changeStatus, deleteTask
 
 const addToMyTasks = (task) => {
     myTasks.push(task);
-    pubsub.publish("myTasksUpdated", myTasks);
-    console.log(myTasks);
+    pubsub.publish("myTasksUpdated", myProjects);
 };
 
 const addToMyProjects = (project) => {
     Object.assign(myProjects, project);
+    pubsub.publish("myProjectsUpdated", myProjects);
 };
 
 const updateLists = () => {
@@ -31,6 +31,8 @@ const updateLists = () => {
             console.log("task was assigned to project that was deleted");
         };
     };
+    console.log("updateLists called");
+    console.log(myProjects);
 };
 
 const changePriority = (task, newPriority) => {
@@ -46,4 +48,7 @@ const deleteProject = () => {
 
 };
 
+pubsub.subscribe("myTasksUpdated" , updateLists);
+pubsub.subscribe("myProjectsUpdated" , updateLists);
 pubsub.subscribe("taskCreated", addToMyTasks);
+pubsub.subscribe("projectCreated", addToMyProjects);

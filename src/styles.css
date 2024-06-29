@@ -31,7 +31,15 @@
     background-color: #cbd5e1;
     color: #0f172a;
 }
-
+.project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.project-list button{
+    min-height: 34px;
+    margin-right: 20px;
+}
 dialog {
     margin: auto;
     padding: 10px;
@@ -91,30 +99,30 @@ dialog {
     gap: 1rem;
 }
 
-.add-task, .inbox {
+.add-task{
     min-height: 34px;
     padding: 0 10px;
     margin: 20px
 }
 
-.add-task:hover, .inbox:hover {
+.add-task:hover {
   background-color: #F3F4F6;
   text-decoration: none;
   transition-duration: 0.1s;
 }
 
-.add-task:disabled, .inbox:disabled {
+.add-task:disabled {
   background-color: #FAFBFC;
   border-color: rgba(27, 31, 35, 0.15);
   cursor: default;
 }
 
-.add-task:active, .inbox:active {
+.add-task:active {
   background-color: #EDEFF2;
   box-shadow: rgba(225, 228, 232, 0.2) 0 1px 0 inset;
   transition: none 0s;
 }
 
-.add-task:focus, .inbox:focus {
+.add-task:focus {
   outline: 1px transparent;
 }

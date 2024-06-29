@@ -3,7 +3,7 @@ import { pubsub } from "./pubsub";
 import { createTask, createProject, myTasks, myProjects } from './create.js';
 import { addToMyTasks, addToMyProjects, updateLists, changePriority } from './listsController';
 import { compareAsc, format } from "date-fns";
-import { showFormClickListener, taskDetails } from './displayController.js';
+import { showFormClickListener, displayTasks } from './displayController.js';
 
 
 //click listener for add task/project buttons
@@ -14,6 +14,7 @@ const Inbox = createProject("Inbox");
 addToMyProjects(Inbox);
 
 
-updateLists();
-console.log( myTasks);
-console.log( myProjects);
+displayTasks(myTasks);
+
+createProject("Test");
+console.log(myTasks);
