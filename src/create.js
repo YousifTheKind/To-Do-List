@@ -23,17 +23,6 @@ const createProject = (title) => {
     pubsub.publish("projectCreated", newProject);
 };
 
-// delete later
-const testTask = {
-    title: "test",
-    description: "test",
-    doDate: "2024-06-12",
-    priority: "P1",
-    project: "Inbox",
-    status: "unchecked"
-}
-myTasks.push(testTask);
-
 
 pubsub.subscribe("taskRecived", createTask);
 pubsub.subscribe("projectRecived", createProject);

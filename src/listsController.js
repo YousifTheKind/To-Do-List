@@ -21,7 +21,6 @@ const updateLists = () => {
     
     for (const task of myTasks) {
         const projects = Object.keys(myProjects);
-        
         if (projects.includes(task.project)) {
             let projectMatch = projects.find(title => title == task.project);
             myProjects[projectMatch].push(task);
@@ -30,9 +29,9 @@ const updateLists = () => {
         else {
             console.log("task was assigned to project that was deleted");
         };
+        pubsub.publish("myTasksUpdated", myProjects);
+        console.log(myProjects);
     };
-    console.log("updateLists called");
-    console.log(myProjects);
 };
 
 const changePriority = (task, newPriority) => {

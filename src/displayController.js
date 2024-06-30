@@ -1,5 +1,5 @@
 import { pubsub } from "./pubsub";
-export { showFormClickListener, taskDetails, displayTasks}
+export { showFormClickListener, displayTasks}
 const taskDialog = document.querySelector(".task-dialog");
 const projectDialog = document.querySelector(".project-dialog");
 const taskConfirmBtn = document.querySelector(".task-confirm-btn");
@@ -10,7 +10,7 @@ const taskFrom = document.querySelector("#add-task-form");
 const projectFrom = document.querySelector("#add-project-form");
 const currentView = document.querySelector(".current-view");
 const projectList = document.querySelector(".project-list");
-const taskDetails = [];
+const cancelBtns = document.querySelectorAll(".cancel-btn");
 let selectedProject = "Inbox"
 
 
@@ -28,8 +28,9 @@ function showFormClickListener () {
     });
 };
 
-taskConfirmBtn.addEventListener("click", (e) => {
+taskFrom.addEventListener("submit", (e) => {
     e.preventDefault();
+    const taskDetails = [];
 
     const title = document.getElementById("taskTitle").value;
     const description = document.getElementById("description").value;
@@ -38,22 +39,24 @@ taskConfirmBtn.addEventListener("click", (e) => {
     const date = document.getElementById("do-date").value;
     const status = "unchecked"
 
-    taskDetails.push(title, description, project, priority, date, status);
+    taskDetails.push(title, description, date, priority, project, status);
     pubsub.publish("taskRecived", taskDetails);
+    taskFrom.reset();
     taskDialog.close();
 });
 
-projectConfirmBtn.addEventListener("click", (e) => {
+projectFrom.addEventListener("submit", (e) => {
     e.preventDefault();
     const title = document.getElementById("projectTitle").value;
     pubsub.publish("projectRecived", title);
     projectDialog.close();
 });
 
+
 const displayTasks = (myProjects) => {
     //clearing view
     currentView.replaceChildren();
-
+    
     // create the element for the selected project
     const projectName = document.createElement("div");
     projectName.classList.add("project-name");
@@ -64,9 +67,12 @@ const displayTasks = (myProjects) => {
     const tasks = myProjects[selectedProject];
 
     //create the elements for the currently selected project
+    const taskList = document.createElement("ul");
+    taskList.classList.add(".task-list");
+    currentView.append(taskList);
+
     for(const task in tasks) {
-        console.log(tasks[task].title);
-        const taskList = document.createElement("ul");
+        taskList.replaceChildren();
         const li = document.createElement("li");
         const taskItem = document.createElement("div");
         const label = document.createElement("label");
@@ -76,7 +82,6 @@ const displayTasks = (myProjects) => {
         const editBtn = document.createElement("button");
         const deleteBtn = document.createElement("button");
         
-        taskList.classList.add(".task-list");
         taskItem.classList.add("task-item");
 
         checkBox.type = "checkbox";
@@ -94,7 +99,6 @@ const displayTasks = (myProjects) => {
         li.appendChild(taskItem);
         label.append(checkBox, taskTitle);
         taskItem.append(label, doDate, editBtn, deleteBtn);
-        currentView.append(taskList);
     }
 };
 
@@ -120,5 +124,16 @@ const displayProjectList = (myProjects) => {
     });
 };
 
+cancelBtns.forEach((btn) => {
+    btn.addEventListener("click", () =>{
+        btn.closest("dialog").close();
+    });
+});
+
+// function addProjectsToDropdownList (myProjects) {
+//     const selectElm = document.querySelector("#project");
+//     for()
+// };
 pubsub.subscribe("myProjectsUpdated", displayProjectList);
-pubsub.subscribe("myProjectsUpdated", displayTasks);
+pubsub.subscribe("myTasksUpdated", displayTasks);
+// pubsub.subscribe("myProjectsUpdated", addProjectsToDropdownList);

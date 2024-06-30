@@ -10,11 +10,4 @@ import { showFormClickListener, displayTasks } from './displayController.js';
 showFormClickListener();
 
 //default project
-const Inbox = createProject("Inbox");
-addToMyProjects(Inbox);
-
-
-displayTasks(myTasks);
-
-createProject("Test");
-console.log(myTasks);
+createProject("Inbox");
