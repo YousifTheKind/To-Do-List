@@ -72,7 +72,6 @@ const displayTasks = (myProjects) => {
     currentView.append(taskList);
 
     for(const task in tasks) {
-        taskList.replaceChildren();
         const li = document.createElement("li");
         const taskItem = document.createElement("div");
         const label = document.createElement("label");
@@ -99,6 +98,8 @@ const displayTasks = (myProjects) => {
         li.appendChild(taskItem);
         label.append(checkBox, taskTitle);
         taskItem.append(label, doDate, editBtn, deleteBtn);
+
+        console.log(tasks);
     }
 };
 
@@ -130,10 +131,19 @@ cancelBtns.forEach((btn) => {
     });
 });
 
-// function addProjectsToDropdownList (myProjects) {
-//     const selectElm = document.querySelector("#project");
-//     for()
-// };
-pubsub.subscribe("myProjectsUpdated", displayProjectList);
-pubsub.subscribe("myTasksUpdated", displayTasks);
-// pubsub.subscribe("myProjectsUpdated", addProjectsToDropdownList);
+function addProjectsToDropdownList (myProjects) {
+    const selectElm = document.querySelector("#project");
+    selectElm.replaceChildren()
+    const projects = Object.keys(myProjects);
+    projects.forEach((pName) => {
+        const option =  document.createElement("option");
+        option.textContent = pName;
+        option.value = pName;
+        if(option.value == "inbox") option.selected = selected;
+        selectElm.appendChild(option);
+    });
+    console.log(projects);
+};
+pubsub.subscribe("ListsUpdated", displayProjectList);
+pubsub.subscribe("ListsUpdated", displayTasks);
+pubsub.subscribe("ListsUpdated", addProjectsToDropdownList);
