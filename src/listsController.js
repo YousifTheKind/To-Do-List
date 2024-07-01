@@ -19,8 +19,9 @@ const updateLists = () => {
         myProjects[key] = [];
     };
     
-    for (const task of myTasks) {
+    for (const [index, task] of myTasks.entries()) {
         const projects = Object.keys(myProjects);
+        task.indexInMyTasks = index;
         if (projects.includes(task.project)) {
             let projectMatch = projects.find(title => title == task.project);
             myProjects[projectMatch].push(task);
@@ -40,13 +41,16 @@ const changePriority = (task, newPriority) => {
 const changeStatus = (task) => {
     if(task.status == "unchecked") task.status = "checked";
 };
-const deleteTask = () => {
-    
+
+const deleteTask = (taskIndex) => {
+    myTasks.splice(taskIndex, 1);
+    pubsub.publish("myProjectsUpdated");
 };
+
 const deleteProject = () => {
 
 };
-
+pubsub.subscribe("taskDeleted", deleteTask)
 pubsub.subscribe("myProjectsUpdated" , updateLists);
 pubsub.subscribe("myTasksUpdated" , updateLists);
 pubsub.subscribe("taskCreated", addToMyTasks);
