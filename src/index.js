@@ -12,4 +12,7 @@ showFormClickListener();
 //default project
 createProject("Inbox");
 
+//delete
+const details = ["test", "test", "test", "P1", "Inbox", "unchecked"];
+createTask(details);
 updateLists();

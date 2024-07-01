@@ -79,6 +79,7 @@ const displayTasks = (myProjects) => {
         const taskTitle = document.createElement("span");
         const doDate = document.createElement("div");
         const description = document.createElement("div");
+        const priority = document.createElement("div");
         const editBtn = document.createElement("button");
         const deleteBtn = document.createElement("button");
         
@@ -91,6 +92,7 @@ const displayTasks = (myProjects) => {
 
         doDate.textContent = tasks[task].doDate;
         description.textContent = tasks[task].description;
+        priority.textContent = tasks[task].priority;
         editBtn.textContent = "Edit Button";
         editBtn.classList.add("task-edit-btn");
 
@@ -99,7 +101,7 @@ const displayTasks = (myProjects) => {
         taskList.appendChild(li);
         li.appendChild(taskItem);
         label.append(checkBox, taskTitle);
-        taskItem.append(label, description, doDate, editBtn, deleteBtn);
+        taskItem.append(label, description, priority,doDate, editBtn, deleteBtn);
     };
 };
 
@@ -142,7 +144,6 @@ function addProjectsToDropdownList (myProjects) {
         if(option.value == "inbox") option.selected = selected;
         selectElm.appendChild(option);
     });
-    console.log(projects);
 };
 pubsub.subscribe("ListsUpdated", displayProjectList);
 pubsub.subscribe("ListsUpdated", displayTasks);
