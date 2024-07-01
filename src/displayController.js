@@ -78,6 +78,7 @@ const displayTasks = (myProjects) => {
         const checkBox = document.createElement("input");
         const taskTitle = document.createElement("span");
         const doDate = document.createElement("div");
+        const description = document.createElement("div");
         const editBtn = document.createElement("button");
         const deleteBtn = document.createElement("button");
         
@@ -89,6 +90,7 @@ const displayTasks = (myProjects) => {
         taskTitle.textContent = tasks[task].title;
 
         doDate.textContent = tasks[task].doDate;
+        description.textContent = tasks[task].description;
         editBtn.textContent = "Edit Button";
         editBtn.classList.add("task-edit-btn");
 
@@ -97,10 +99,8 @@ const displayTasks = (myProjects) => {
         taskList.appendChild(li);
         li.appendChild(taskItem);
         label.append(checkBox, taskTitle);
-        taskItem.append(label, doDate, editBtn, deleteBtn);
-
-        console.log(tasks);
-    }
+        taskItem.append(label, description, doDate, editBtn, deleteBtn);
+    };
 };
 
 const displayProjectList = (myProjects) => {
