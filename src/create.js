@@ -23,6 +23,5 @@ const createProject = (title) => {
     pubsub.publish("projectCreated", newProject);
 };
 
-
 pubsub.subscribe("taskRecived", createTask);
 pubsub.subscribe("projectRecived", createProject);

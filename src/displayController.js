@@ -1,5 +1,5 @@
 import { pubsub } from "./pubsub";
-export { showFormClickListener, displayTasks}
+export { displayTasks }
 const taskDialog = document.querySelector(".task-dialog");
 const projectDialog = document.querySelector(".project-dialog");
 const addTaskBtn = document.querySelector(".add-task");
@@ -11,8 +11,8 @@ const projectList = document.querySelector(".project-list");
 const cancelBtns = document.querySelectorAll(".cancel-btn");
 let selectedProject = "Inbox"
 
-
-function showFormClickListener () {
+// make sure the page is loaded
+document.addEventListener("DOMContentLoaded", () => {
     // shows the form to add a task when clicked
     addTaskBtn.addEventListener("click", function() {
         taskDialog.showModal();
@@ -24,7 +24,16 @@ function showFormClickListener () {
         projectDialog.showModal();
         projectFrom.reset();
     });
-};
+
+
+    cancelBtns.forEach((btn) => {
+        btn.addEventListener("click", () =>{
+            btn.closest("dialog").close();
+        });
+    });
+
+});
+
 
 taskFrom.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -102,14 +111,7 @@ const displayTasks = (myProjects) => {
         li.appendChild(taskItem);
         label.append(checkBox, taskTitle);
         taskItem.append(label, description, priority,doDate, editBtn, deleteBtn);
-
-        deleteBtn.addEventListener("click", (e) => {
-            const taskIndex = e.target.closest("li").getAttribute("Index");
-            pubsub.publish("taskDeleted", taskIndex)
-        });
     };
-
-
 };
 
 const displayProjectList = (myProjects) => {
@@ -134,13 +136,9 @@ const displayProjectList = (myProjects) => {
     });
 };
 
-cancelBtns.forEach((btn) => {
-    btn.addEventListener("click", () =>{
-        btn.closest("dialog").close();
-    });
-});
 
-function addProjectsToDropdownList (myProjects) {
+
+const addProjectsToDropdownList = (myProjects) => {
     const selectElm = document.querySelector("#project");
     selectElm.replaceChildren()
     const projects = Object.keys(myProjects);
@@ -153,9 +151,27 @@ function addProjectsToDropdownList (myProjects) {
     });
 };
 
+const displayEditTask = (myTasks) => {
 
+    document.querySelector(".current-view").addEventListener("click", (e) => {
+        if(e.target.className === "task-delete-btn") {
+            const taskIndex = e.target.closest("li").getAttribute("Index");
+            pubsub.publish("taskDeleted", taskIndex);
+        };
+
+        if(e.target.className === "task-edit-btn") {
+            const taskIndex = e.target.closest("li").getAttribute("Index");
+            taskDialog.showModal();
+            taskFrom.reset();
+            document.getElementById("taskTitle").value = myTasks[taskIndex].title;
+            pubsub.publish("taskEdited", taskIndex);
+        };
+    });
+
+
+};
 
 pubsub.subscribe("ListsUpdated", displayProjectList);
 pubsub.subscribe("ListsUpdated", displayTasks);
 pubsub.subscribe("ListsUpdated", addProjectsToDropdownList);
-// pubsub.subscribe("ListsUpdated", deleteBtnListener)
+pubsub.subscribe("myTasksUpdated", displayEditTask)
