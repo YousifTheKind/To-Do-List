@@ -16,6 +16,6 @@ const pubsub = {
                 fn(...data);
             });
         };
-        // console.log("Publishing about: " + eventName);
+        console.log("Publishing about: " + eventName);
     }
 };

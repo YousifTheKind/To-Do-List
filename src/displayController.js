@@ -1,5 +1,7 @@
 import { pubsub } from "./pubsub";
 import { format } from "date-fns";
+import { myProjects, myTasks } from "./create";
+
 const taskDialog = document.querySelector(".task-dialog");
 const projectDialog = document.querySelector(".project-dialog");
 const addTaskBtn = document.querySelector(".add-task");
@@ -67,6 +69,7 @@ taskFormConfirmBtn.addEventListener("click", (e) =>{
 });
 
 editTask.addEventListener("click", (e) => {
+    console.log("im clicked");
     e.preventDefault()
     const editedTask = {
         title: document.getElementById("taskTitle").value,
@@ -89,7 +92,7 @@ projectFrom.addEventListener("submit", (e) => {
 });
 
 
-const displayTasks = (myProjects) => {
+const displayTasks = () => {
     //clearing view
     currentView.replaceChildren();
     
@@ -117,7 +120,6 @@ const displayTasks = (myProjects) => {
         const priority = document.createElement("div");
         const editBtn = document.createElement("button");
         const deleteBtn = document.createElement("button");
-        const actionBtnsContainer = document.createElement("div");
         
         taskItem.classList.add("task-item");
         li.setAttribute("index", tasks[task].indexInMyTasks);
@@ -132,18 +134,16 @@ const displayTasks = (myProjects) => {
         editBtn.textContent = "Edit";
         editBtn.classList.add("task-edit-btn");
         deleteBtn.classList.add("task-delete-btn");
-        actionBtnsContainer.classList.add("actionBtns");
 
         deleteBtn.textContent = "Delete";
 
-        actionBtnsContainer.append(editBtn, deleteBtn);
         taskList.appendChild(li);
         li.appendChild(taskItem);
-        taskItem.append(checkBox, taskTitle, description, priority, date, actionBtnsContainer);
+        taskItem.append(checkBox, taskTitle, description, priority, date, editBtn, deleteBtn);
     };
 };
 
-const displayProjectList = (myProjects) => {
+const displayProjectList = () => {
     //clearing the DOM
     projectList.replaceChildren();
 
@@ -165,7 +165,7 @@ const displayProjectList = (myProjects) => {
     });
 };
 
-const addProjectsToDropdownList = (myProjects) => {
+const addProjectsToDropdownList = () => {
     const selectElm = document.querySelector("#project");
     selectElm.replaceChildren()
     const projects = Object.keys(myProjects);
@@ -179,48 +179,46 @@ const addProjectsToDropdownList = (myProjects) => {
 };
 
 // click listener for delete and edit buttons and all events inside current-view
-const actionButtonsEventListener = (myTasks) => {
-    document.querySelector(".current-view").addEventListener("click", (e) => {
-        // delete button handler
-        if(e.target.className === "task-delete-btn") {
-            // send the task index to deleteTask
-            taskIndex = e.target.closest("li").getAttribute("Index");
-            pubsub.publish("taskDeleted", taskIndex);
-        };
-        
-        // edit button handler
-        if(e.target.className === "task-edit-btn") {
-            taskIndex = e.target.closest("li").getAttribute("Index");
-            // show the modal and the form
-            taskDialog.showModal();
-            taskForm.reset();
+document.querySelector(".current-view").addEventListener("click", (e) => {
+    console.log(e.target);
+    // delete button handler
+    if(e.target.className === "task-delete-btn") {
+        // send the task index to deleteTask
+        taskIndex = e.target.closest("li").getAttribute("Index");
+        pubsub.publish("taskDeleted", taskIndex);
+    };
+    
+    // edit button handler
+    if(e.target.className === "task-edit-btn") {
+        taskIndex = e.target.closest("li").getAttribute("Index");
+        // show the modal and the form
+        taskDialog.showModal();
+        taskForm.reset();
 
-            // populate the form input fields with the object data
-            document.getElementById("taskTitle").value = myTasks[taskIndex].title;
-            document.getElementById("description").value = myTasks[taskIndex].description;
-            document.getElementById("project").value = myTasks[taskIndex].project;
-            document.getElementById("priority").value = myTasks[taskIndex].priority;
-            document.getElementById("do-date").value = myTasks[taskIndex].date;
+        // populate the form input fields with the object data
+        document.getElementById("taskTitle").value = myTasks[taskIndex].title;
+        document.getElementById("description").value = myTasks[taskIndex].description;
+        document.getElementById("project").value = myTasks[taskIndex].project;
+        document.getElementById("priority").value = myTasks[taskIndex].priority;
+        document.getElementById("do-date").value = myTasks[taskIndex].date;
 
-            // hide the confirm button that submits the form and show the edit button
-            taskFormConfirmBtn.style.display = "none";
-            editTask.style.display = "block";
-        };
+        // hide the confirm button that submits the form and show the edit button
+        taskFormConfirmBtn.style.display = "none";
+        editTask.style.display = "block";
+    };
 
-        if(e.target.type == "checkbox" && e.target.checked) {
-            e.target.closest(".task-item").style.textDecoration = "line-through";
-            e.target.closest(".task-item").style.opacity = "0.5";
-        }
-        else if(e.target.type == "checkbox" && !e.target.checked){
-            e.target.closest(".task-item").style.textDecoration = "none";
-            e.target.closest(".task-item").style.opacity = "1";
-        }
+    if(e.target.type == "checkbox" && e.target.checked) {
+        e.target.closest(".task-item").style.textDecoration = "line-through";
+        e.target.closest(".task-item").style.opacity = "0.5";
+    }
+    else if(e.target.type == "checkbox" && !e.target.checked){
+        e.target.closest(".task-item").style.textDecoration = "none";
+        e.target.closest(".task-item").style.opacity = "1";
+    }
 
-    });
-};
+});
 
 
 pubsub.subscribe("ListsUpdated", displayProjectList);
 pubsub.subscribe("ListsUpdated", displayTasks);
 pubsub.subscribe("ListsUpdated", addProjectsToDropdownList);
-pubsub.subscribe("myTasksUpdated", actionButtonsEventListener);

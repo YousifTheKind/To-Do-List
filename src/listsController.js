@@ -19,8 +19,7 @@ const updateLists = () => {
             console.log("task was assigned to project that was deleted");
         };
     };
-    pubsub.publish("ListsUpdated", myProjects);
-    console.log(myProjects);
+    pubsub.publish("ListsUpdated");
 };
 
 const changePriority = (task, newPriority) => {
@@ -32,13 +31,13 @@ const changeStatus = (task) => {
 
 const deleteTask = (taskIndex) => {
     myTasks.splice(taskIndex, 1);
-    pubsub.publish("myProjectsUpdated");
-    pubsub.publish("myTasksUpdated", myTasks);
+    pubsub.publish("myTasksUpdated");
 };
 
 const editTask = (editedTaskObj, taskIndex) => {
+    console.log("doing stuff");
     Object.assign(myTasks[taskIndex], editedTaskObj);
-    pubsub.publish("myTasksUpdated", myTasks);
+    pubsub.publish("myTasksUpdated");
 };
 
 pubsub.subscribe("taskDeleted", deleteTask)
