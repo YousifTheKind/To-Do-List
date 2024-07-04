@@ -4,12 +4,13 @@ const taskDialog = document.querySelector(".task-dialog");
 const projectDialog = document.querySelector(".project-dialog");
 const addTaskBtn = document.querySelector(".add-task");
 const addProjectBtn = document.querySelector(".add-project");
-const taskFrom = document.querySelector("#add-task-form");
+const taskForm = document.querySelector("#add-task-form");
 const projectFrom = document.querySelector("#add-project-form");
 const currentView = document.querySelector(".current-view");
 const projectList = document.querySelector(".project-list");
 const cancelBtns = document.querySelectorAll(".cancel-btn");
 const editTask = document.querySelector(".edit-task");
+const taskFormConfirmBtn = document.querySelector(".task-confirm-btn");
 let taskIndex = ""
 let selectedProject = "Inbox"
 
@@ -18,9 +19,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // shows the form to add a task when clicked
     addTaskBtn.addEventListener("click", function() {
         taskDialog.showModal();
-        taskFrom.reset();
+        taskForm.reset();
 
-        document.querySelector(".task-confirm-btn").style.display = "block";
+        taskFormConfirmBtn.style.display = "block";
         editTask.style.display = "none";
     });    
 
@@ -38,17 +39,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-document.querySelector(".task-confirm-btn").addEventListener("click", (e) =>{
+taskFormConfirmBtn.addEventListener("click", (e) =>{
     e.preventDefault();
+    // make sure all required fields are filled
+    for(const element of taskForm.querySelectorAll("[required]")) {
+        if (!element.reportValidity()) {
+            alert("All fields are required");
+            return;
+        };
+    };
+
+    //if all fields are filled then get the values and send it to createTask
     const title = document.getElementById("taskTitle").value;
     const description = document.getElementById("description").value;
     const project = document.getElementById("project").value;
     const priority = document.getElementById("priority").value;
     const date = document.getElementById("do-date").value;
-
     pubsub.publish("taskRecived", title, description, date, priority, project);
-    taskFrom.reset();
-    taskDialog.close();
+
+    // reset and close the form
+    taskForm.reset();
+    taskDialog.close();  
 });
 
 editTask.addEventListener("click", (e) => {
@@ -61,7 +72,7 @@ editTask.addEventListener("click", (e) => {
         date: document.getElementById("do-date").value
     };
 
-    taskFrom.reset();
+    taskForm.reset();
     taskDialog.close();       
     pubsub.publish("taskEdited", editedTask, taskIndex);
 });   
@@ -150,8 +161,6 @@ const displayProjectList = (myProjects) => {
     });
 };
 
-
-
 const addProjectsToDropdownList = (myProjects) => {
     const selectElm = document.querySelector("#project");
     selectElm.replaceChildren()
@@ -168,7 +177,10 @@ const addProjectsToDropdownList = (myProjects) => {
 // click listener for delete and edit buttons
 const actionButtonsEventListener = (myTasks) => {
     document.querySelector(".current-view").addEventListener("click", (e) => {
-        taskIndex = e.target.closest("li").getAttribute("Index");
+        // prevent throwing an erro when user clicks on empty space
+        if(e.target.className !== "current-view") {
+            taskIndex = e.target.closest("li").getAttribute("Index");
+        }
 
         // delete button handler
         if(e.target.className === "task-delete-btn") {
@@ -179,7 +191,7 @@ const actionButtonsEventListener = (myTasks) => {
         if(e.target.className === "task-edit-btn") {
             // show the modal and the form
             taskDialog.showModal();
-            taskFrom.reset();
+            taskForm.reset();
 
             // populate the form input fields with the object data
             document.getElementById("taskTitle").value = myTasks[taskIndex].title;
@@ -189,7 +201,7 @@ const actionButtonsEventListener = (myTasks) => {
             document.getElementById("do-date").value = myTasks[taskIndex].date;
 
             // hide the confirm button that submits the form and show the edit button
-            document.querySelector(".task-confirm-btn").style.display = "none";
+            taskFormConfirmBtn.style.display = "none";
             editTask.style.display = "block";
         };
     });
