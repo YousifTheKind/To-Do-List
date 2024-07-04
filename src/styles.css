@@ -93,7 +93,9 @@ dialog {
     display: flex;
     justify-content: space-between;
 }
-
+.edit-task {
+    display: none;
+}
 .task-item {
     display: flex;
     gap: 1rem;

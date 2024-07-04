@@ -1,24 +1,12 @@
 import { myProjects, myTasks } from "./create";
 import { pubsub } from "./pubsub";
-export { addToMyTasks, addToMyProjects, changePriority, changeStatus, deleteTask, updateLists };
-
-
-const addToMyTasks = (task) => {
-    myTasks.push(task);
-    pubsub.publish("myTasksUpdated", myTasks);
-};
-
-const addToMyProjects = (project) => {
-    Object.assign(myProjects, project);
-    pubsub.publish("myProjectsUpdated", myProjects);
-};
+export { changePriority, changeStatus, deleteTask, updateLists };
 
 const updateLists = () => {
     // reset all project tasks
     for(const key in myProjects) {
         myProjects[key] = [];
     };
-    console.log(myProjects);
     for (const [index, task] of myTasks.entries()) {
         const projects = Object.keys(myProjects);
         task.indexInMyTasks = index;
@@ -32,6 +20,7 @@ const updateLists = () => {
         };
     };
     pubsub.publish("ListsUpdated", myProjects);
+    console.log(myProjects);
 };
 
 const changePriority = (task, newPriority) => {
@@ -47,14 +36,12 @@ const deleteTask = (taskIndex) => {
     pubsub.publish("myTasksUpdated", myTasks);
 };
 
-const editTask = (taskIndex) => {
-    const task = myTasks[taskIndex];
-
+const editTask = (editedTaskObj, taskIndex) => {
+    Object.assign(myTasks[taskIndex], editedTaskObj);
+    pubsub.publish("myTasksUpdated", myTasks);
 };
 
 pubsub.subscribe("taskDeleted", deleteTask)
 pubsub.subscribe("myProjectsUpdated" , updateLists);
 pubsub.subscribe("myTasksUpdated" , updateLists);
-pubsub.subscribe("taskCreated", addToMyTasks);
-pubsub.subscribe("projectCreated", addToMyProjects);
 pubsub.subscribe("taskEdited", editTask);

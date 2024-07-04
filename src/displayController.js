@@ -1,5 +1,5 @@
 import { pubsub } from "./pubsub";
-export { displayTasks }
+import { compareAsc, format } from "date-fns";
 const taskDialog = document.querySelector(".task-dialog");
 const projectDialog = document.querySelector(".project-dialog");
 const addTaskBtn = document.querySelector(".add-task");
@@ -9,6 +9,8 @@ const projectFrom = document.querySelector("#add-project-form");
 const currentView = document.querySelector(".current-view");
 const projectList = document.querySelector(".project-list");
 const cancelBtns = document.querySelectorAll(".cancel-btn");
+const editTask = document.querySelector(".edit-task");
+let taskIndex = ""
 let selectedProject = "Inbox"
 
 // make sure the page is loaded
@@ -17,6 +19,9 @@ document.addEventListener("DOMContentLoaded", () => {
     addTaskBtn.addEventListener("click", function() {
         taskDialog.showModal();
         taskFrom.reset();
+
+        document.querySelector(".task-confirm-btn").style.display = "block";
+        editTask.style.display = "none";
     });    
 
     // shows the form to add a project when clicked
@@ -24,7 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
         projectDialog.showModal();
         projectFrom.reset();
     });
-
 
     cancelBtns.forEach((btn) => {
         btn.addEventListener("click", () =>{
@@ -34,23 +38,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-
-taskFrom.addEventListener("submit", (e) => {
+document.querySelector(".task-confirm-btn").addEventListener("click", (e) =>{
     e.preventDefault();
-    const taskDetails = [];
-
     const title = document.getElementById("taskTitle").value;
     const description = document.getElementById("description").value;
     const project = document.getElementById("project").value;
     const priority = document.getElementById("priority").value;
     const date = document.getElementById("do-date").value;
-    const status = "unchecked"
 
-    taskDetails.push(title, description, date, priority, project, status);
-    pubsub.publish("taskRecived", taskDetails);
+    pubsub.publish("taskRecived", title, description, date, priority, project);
     taskFrom.reset();
     taskDialog.close();
 });
+
+editTask.addEventListener("click", (e) => {
+    e.preventDefault()
+    const editedTask = {
+        title: document.getElementById("taskTitle").value,
+        description: document.getElementById("description").value,
+        project: document.getElementById("project").value,
+        priority: document.getElementById("priority").value,
+        date: document.getElementById("do-date").value
+    };
+
+    taskFrom.reset();
+    taskDialog.close();       
+    pubsub.publish("taskEdited", editedTask, taskIndex);
+});   
 
 projectFrom.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -84,7 +98,7 @@ const displayTasks = (myProjects) => {
         const label = document.createElement("label");
         const checkBox = document.createElement("input");
         const taskTitle = document.createElement("span");
-        const doDate = document.createElement("div");
+        const date = document.createElement("div");
         const description = document.createElement("div");
         const priority = document.createElement("div");
         const editBtn = document.createElement("button");
@@ -98,7 +112,7 @@ const displayTasks = (myProjects) => {
 
         taskTitle.textContent = tasks[task].title;
 
-        doDate.textContent = tasks[task].doDate;
+        date.textContent = tasks[task].date;
         description.textContent = tasks[task].description;
         priority.textContent = tasks[task].priority;
         editBtn.textContent = "Edit";
@@ -110,7 +124,7 @@ const displayTasks = (myProjects) => {
         taskList.appendChild(li);
         li.appendChild(taskItem);
         label.append(checkBox, taskTitle);
-        taskItem.append(label, description, priority,doDate, editBtn, deleteBtn);
+        taskItem.append(label, description, priority, date, editBtn, deleteBtn);
     };
 };
 
@@ -151,27 +165,37 @@ const addProjectsToDropdownList = (myProjects) => {
     });
 };
 
-const displayEditTask = (myTasks) => {
-
+// click listener for delete and edit buttons
+const actionButtonsEventListener = (myTasks) => {
     document.querySelector(".current-view").addEventListener("click", (e) => {
+        taskIndex = e.target.closest("li").getAttribute("Index");
+
+        // delete button handler
         if(e.target.className === "task-delete-btn") {
-            const taskIndex = e.target.closest("li").getAttribute("Index");
             pubsub.publish("taskDeleted", taskIndex);
         };
-
+        
+        // edit button handler
         if(e.target.className === "task-edit-btn") {
-            const taskIndex = e.target.closest("li").getAttribute("Index");
+            // show the modal and the form
             taskDialog.showModal();
             taskFrom.reset();
+
+            // populate the form input fields with the object data
             document.getElementById("taskTitle").value = myTasks[taskIndex].title;
-            pubsub.publish("taskEdited", taskIndex);
+            document.getElementById("description").value = myTasks[taskIndex].description;
+            document.getElementById("project").value = myTasks[taskIndex].project;
+            document.getElementById("priority").value = myTasks[taskIndex].priority;
+            document.getElementById("do-date").value = myTasks[taskIndex].date;
+
+            // hide the confirm button that submits the form and show the edit button
+            document.querySelector(".task-confirm-btn").style.display = "none";
+            editTask.style.display = "block";
         };
     });
-
-
 };
 
 pubsub.subscribe("ListsUpdated", displayProjectList);
 pubsub.subscribe("ListsUpdated", displayTasks);
 pubsub.subscribe("ListsUpdated", addProjectsToDropdownList);
-pubsub.subscribe("myTasksUpdated", displayEditTask)
+pubsub.subscribe("myTasksUpdated", actionButtonsEventListener);

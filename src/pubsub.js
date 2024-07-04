@@ -10,10 +10,10 @@ const pubsub = {
     unsubscribe: function(eventName, fn) {
         // console.log("someone unsubscribed from: " + eventName);
     },
-    publish: function(eventName, data) {
+    publish: function(eventName, ...data) {
         if(this.events[eventName]) {
             this.events[eventName].forEach(fn => {
-                fn(data);
+                fn(...data);
             });
         };
         console.log("Publishing about: " + eventName);
