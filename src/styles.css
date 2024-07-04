@@ -128,3 +128,7 @@ dialog {
 .add-task:focus {
   outline: 1px transparent;
 }
+
+input[type="checkbox"]:checked {
+    
+}

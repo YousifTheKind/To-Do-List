@@ -106,7 +106,7 @@ const displayTasks = (myProjects) => {
     for(const task in tasks) {
         const li = document.createElement("li");
         const taskItem = document.createElement("div");
-        const label = document.createElement("label");
+        // const label = document.createElement("label");
         const checkBox = document.createElement("input");
         const taskTitle = document.createElement("span");
         const date = document.createElement("div");
@@ -134,8 +134,8 @@ const displayTasks = (myProjects) => {
 
         taskList.appendChild(li);
         li.appendChild(taskItem);
-        label.append(checkBox, taskTitle);
-        taskItem.append(label, description, priority, date, editBtn, deleteBtn);
+        // label.append(checkBox, taskTitle);
+        taskItem.append(checkBox, taskTitle, description, priority, date, editBtn, deleteBtn);
     };
 };
 
@@ -174,21 +174,23 @@ const addProjectsToDropdownList = (myProjects) => {
     });
 };
 
-// click listener for delete and edit buttons
+// click listener for delete and edit buttons and all events inside current-view
 const actionButtonsEventListener = (myTasks) => {
     document.querySelector(".current-view").addEventListener("click", (e) => {
-        // prevent throwing an erro when user clicks on empty space
-        if(e.target.className !== "current-view") {
-            taskIndex = e.target.closest("li").getAttribute("Index");
-        }
+        console.log(e.target);
+        // prevent throwing an error when user clicks on empty space
+
 
         // delete button handler
         if(e.target.className === "task-delete-btn") {
-            pubsub.publish("taskDeleted", taskIndex);
+            // send the task index to deleteTask
+            taskIndex = e.target.closest("li").getAttribute("Index");
+            pubsub.publish("taskDeleted", );
         };
         
         // edit button handler
         if(e.target.className === "task-edit-btn") {
+            taskIndex = e.target.closest("li").getAttribute("Index");
             // show the modal and the form
             taskDialog.showModal();
             taskForm.reset();
@@ -204,8 +206,19 @@ const actionButtonsEventListener = (myTasks) => {
             taskFormConfirmBtn.style.display = "none";
             editTask.style.display = "block";
         };
+
+        if(e.target.type == "checkbox" && e.target.checked) {
+            e.target.closest(".task-item").style.textDecoration = "line-through";
+            e.target.closest(".task-item").style.opacity = "0.5";
+        }
+        else if(e.target.type == "checkbox" && !e.target.checked){
+            e.target.closest(".task-item").style.textDecoration = "none";
+            e.target.closest(".task-item").style.opacity = "1";
+        }
+
     });
 };
+
 
 pubsub.subscribe("ListsUpdated", displayProjectList);
 pubsub.subscribe("ListsUpdated", displayTasks);
