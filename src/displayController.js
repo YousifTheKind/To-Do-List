@@ -1,5 +1,5 @@
 import { pubsub } from "./pubsub";
-import { compareAsc, format } from "date-fns";
+import { format } from "date-fns";
 const taskDialog = document.querySelector(".task-dialog");
 const projectDialog = document.querySelector(".project-dialog");
 const addTaskBtn = document.querySelector(".add-task");
@@ -54,7 +54,11 @@ taskFormConfirmBtn.addEventListener("click", (e) =>{
     const description = document.getElementById("description").value;
     const project = document.getElementById("project").value;
     const priority = document.getElementById("priority").value;
-    const date = document.getElementById("do-date").value;
+    let date = new Date(document.getElementById("do-date").value);
+    
+    //reformat the date
+    date = format(date, "dd/MM/yyyy");
+
     pubsub.publish("taskRecived", title, description, date, priority, project);
 
     // reset and close the form
@@ -106,7 +110,6 @@ const displayTasks = (myProjects) => {
     for(const task in tasks) {
         const li = document.createElement("li");
         const taskItem = document.createElement("div");
-        // const label = document.createElement("label");
         const checkBox = document.createElement("input");
         const taskTitle = document.createElement("span");
         const date = document.createElement("div");
@@ -114,12 +117,12 @@ const displayTasks = (myProjects) => {
         const priority = document.createElement("div");
         const editBtn = document.createElement("button");
         const deleteBtn = document.createElement("button");
+        const actionBtnsContainer = document.createElement("div");
         
         taskItem.classList.add("task-item");
         li.setAttribute("index", tasks[task].indexInMyTasks);
 
         checkBox.type = "checkbox";
-        checkBox.id = `task-${task}`;
 
         taskTitle.textContent = tasks[task].title;
 
@@ -129,13 +132,14 @@ const displayTasks = (myProjects) => {
         editBtn.textContent = "Edit";
         editBtn.classList.add("task-edit-btn");
         deleteBtn.classList.add("task-delete-btn");
+        actionBtnsContainer.classList.add("actionBtns");
 
         deleteBtn.textContent = "Delete";
 
+        actionBtnsContainer.append(editBtn, deleteBtn);
         taskList.appendChild(li);
         li.appendChild(taskItem);
-        // label.append(checkBox, taskTitle);
-        taskItem.append(checkBox, taskTitle, description, priority, date, editBtn, deleteBtn);
+        taskItem.append(checkBox, taskTitle, description, priority, date, actionBtnsContainer);
     };
 };
 
@@ -177,15 +181,11 @@ const addProjectsToDropdownList = (myProjects) => {
 // click listener for delete and edit buttons and all events inside current-view
 const actionButtonsEventListener = (myTasks) => {
     document.querySelector(".current-view").addEventListener("click", (e) => {
-        console.log(e.target);
-        // prevent throwing an error when user clicks on empty space
-
-
         // delete button handler
         if(e.target.className === "task-delete-btn") {
             // send the task index to deleteTask
             taskIndex = e.target.closest("li").getAttribute("Index");
-            pubsub.publish("taskDeleted", );
+            pubsub.publish("taskDeleted", taskIndex);
         };
         
         // edit button handler

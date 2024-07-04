@@ -11,7 +11,6 @@ const createTask = (title, description, date, priority, project) => {
         date,
         priority,
         project,
-        status: "unchecked"
     };
 
     myTasks.push(newTask);
@@ -22,7 +21,7 @@ const createProject = (title) => {
     const newProject = {
         [title]: []
     };
-    
+
     Object.assign(myProjects, newProject);
     pubsub.publish("myProjectsUpdated", myProjects);
 };

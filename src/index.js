@@ -15,3 +15,4 @@ createProject("Inbox");
 //delete
 const details = [];
 createTask("test", "test", "2024-07-09", "P1", "Inbox");
+createTask("not test", "not test", "2024-07-09", "P1", "Inbox");
