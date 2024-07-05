@@ -20,8 +20,9 @@ function storageAvailable(type) {
         storage.length !== 0
       );
     }
-  }
+};
 
+// saves the lists to local storage
 const saveToLocalStorage = () => {
     if (storageAvailable("localStorage")) {
         localStorage.setItem("myTasks", JSON.stringify(myTasks));
@@ -32,14 +33,16 @@ const saveToLocalStorage = () => {
     };
 };
 
+// gets the data from localStorage and assigns it to myProjects and myTasks
 const getFromLocalStorage = () => {
     if(localStorage.getItem("myProjects") && localStorage.getItem("myTasks")) {
         const savedProjects = JSON.parse(localStorage.getItem("myProjects"));
         const savedTasks = JSON.parse(localStorage.getItem("myTasks"));
-        console.log(savedProjects);
         Object.assign(myProjects, savedProjects);
         Object.assign(myTasks, savedTasks);
-        pubsub.publish("ListsUpdated");
-    }
+        pubsub.publish("listsUpdated");
+    };
 };
-pubsub.subscribe("ListsUpdated", saveToLocalStorage);
+
+// saveToLocalStorage will be called every listsUpdated
+pubsub.subscribe("listsUpdated", saveToLocalStorage);

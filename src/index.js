@@ -1,19 +1,13 @@
 import './styles.css';
-import { pubsub } from "./pubsub";
-import { createTask, createProject, myTasks, myProjects } from './create.js';
-import { addToMyTasks, addToMyProjects, updateLists, changePriority } from './listsController';
+import './pubsub';
+import './create.js';
+import './listsController';
 import { displayProjectList, addProjectsToDropdownList } from './displayController.js';
 import { getFromLocalStorage } from './localStorage.js';
 
-
-
+// getting data from localStorage if it exists
 window.addEventListener('load', getFromLocalStorage);
+
+// loading the project list on the side bar and the dropdown menu on the task form
 displayProjectList();
 addProjectsToDropdownList();
-
-//default project
-// createProject("Inbox");
-
-//delete
-// createTask("test", "test", "2024-07-09", "P1", "Inbox");
-// createTask("not test", "not test", "2024-07-09", "P1", "Inbox");

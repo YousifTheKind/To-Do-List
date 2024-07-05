@@ -2,6 +2,8 @@ import { pubsub } from "./pubsub";
 import { format } from "date-fns";
 import { myProjects, myTasks } from "./create";
 export { displayProjectList, addProjectsToDropdownList }
+
+// grabbing html elements
 const taskDialog = document.querySelector(".task-dialog");
 const projectDialog = document.querySelector(".project-dialog");
 const addTaskBtn = document.querySelector(".add-task");
@@ -13,19 +15,27 @@ const projectList = document.querySelector(".project-list");
 const cancelBtns = document.querySelectorAll(".cancel-btn");
 const editTask = document.querySelector(".edit-task");
 const taskFormConfirmBtn = document.querySelector(".task-confirm-btn");
+
+// used to grab the task index from the "index" property on the closest li element
+// used to delete and edit tasks 
 let taskIndex = ""
+
+// currently selected project, inbox by default
 let selectedProject = "Inbox"
 
 // make sure the page is loaded
 document.addEventListener("DOMContentLoaded", () => {
+
     // shows the form to add a task when clicked
     addTaskBtn.addEventListener("click", function() {
+        // show and reset the form
         taskDialog.showModal();
         taskForm.reset();
 
+        // show the button that creates a task and hide the button that edits the task
         taskFormConfirmBtn.style.display = "block";
         editTask.style.display = "none";
-    });    
+    });
 
     // shows the form to add a project when clicked
     addProjectBtn.addEventListener("click", function () {
@@ -33,6 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
         projectFrom.reset();
     });
 
+    // handle the cancel button both forms
     cancelBtns.forEach((btn) => {
         btn.addEventListener("click", () =>{
             btn.closest("dialog").close();
@@ -41,8 +52,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+// handle the confirm button on the task form
 taskFormConfirmBtn.addEventListener("click", (e) =>{
     e.preventDefault();
+
     // make sure all required fields are filled
     for(const element of taskForm.querySelectorAll("[required]")) {
         if (!element.reportValidity()) {
@@ -56,11 +69,9 @@ taskFormConfirmBtn.addEventListener("click", (e) =>{
     const description = document.getElementById("description").value;
     const project = document.getElementById("project").value;
     const priority = document.getElementById("priority").value;
-    let date = new Date(document.getElementById("do-date").value);
+    const date = document.getElementById("do-date").value;
     
-    //reformat the date
-    date = format(date, "dd/MM/yyyy");
-
+    // let createTask know that task data is received and pass it the data
     pubsub.publish("taskRecived", title, description, date, priority, project);
 
     // reset and close the form
@@ -68,9 +79,11 @@ taskFormConfirmBtn.addEventListener("click", (e) =>{
     taskDialog.close();  
 });
 
+// handle the "save" button when user edits the task
 editTask.addEventListener("click", (e) => {
-    console.log("im clicked");
-    e.preventDefault()
+    e.preventDefault();
+
+    // create a new object that holds the edited object
     const editedTask = {
         title: document.getElementById("taskTitle").value,
         description: document.getElementById("description").value,
@@ -79,24 +92,33 @@ editTask.addEventListener("click", (e) => {
         date: document.getElementById("do-date").value
     };
 
+    // reset and close the form
     taskForm.reset();
     taskDialog.close();       
+    
+    // pass the index of the original task in myTasks along with the edited task object to editTask function
     pubsub.publish("taskEdited", editedTask, taskIndex);
 });   
 
+// handle the project form
 projectFrom.addEventListener("submit", (e) => {
     e.preventDefault();
+
+    // get the value the user entered
     const title = document.getElementById("projectTitle").value;
+
+    // check if the project already exists
     if(myProjects.hasOwnProperty(title)) {
         alert("Project Already Exists!");
     }
     else {
+        // call createProject and pass it the title
         pubsub.publish("projectRecived", title);
         projectDialog.close();
     };
 });
 
-
+// handle displaying tasks on the current view
 const displayTasks = () => {
     //clearing view
     currentView.replaceChildren();
@@ -107,18 +129,21 @@ const displayTasks = () => {
     projectName.textContent = selectedProject;
     currentView.appendChild(projectName);
 
-    // get the tasks for the selected project
-    const tasks = myProjects[selectedProject];
-
-    //create the elements for the currently selected project
+    // create the ul that will hold all of the tasks as li-s
     const taskList = document.createElement("ul");
     taskList.classList.add(".task-list");
     currentView.append(taskList);
 
+    // get the tasks for the selected project
+    const tasks = myProjects[selectedProject];
+
+    // for each task under the selected project
     for(const task in tasks) {
+        // create the elements for the task
         const li = document.createElement("li");
         const taskItem = document.createElement("div");
         const checkBox = document.createElement("input");
+        checkBox.type = "checkbox";
         const taskTitle = document.createElement("span");
         const date = document.createElement("div");
         const description = document.createElement("div");
@@ -126,56 +151,78 @@ const displayTasks = () => {
         const editBtn = document.createElement("button");
         const deleteBtn = document.createElement("button");
         
+        // add classes for styling
         taskItem.classList.add("task-item");
-        li.setAttribute("index", tasks[task].indexInMyTasks);
-
-        checkBox.type = "checkbox";
-
-        taskTitle.textContent = tasks[task].title;
-
-        date.textContent = tasks[task].date;
-        description.textContent = tasks[task].description;
-        priority.textContent = tasks[task].priority;
-        editBtn.textContent = "Edit";
         editBtn.classList.add("task-edit-btn");
         deleteBtn.classList.add("task-delete-btn");
 
+        // set the task index on the li element
+        li.setAttribute("index", tasks[task].indexInMyTasks);
+
+        // se the textContent for the elements
+        taskTitle.textContent = tasks[task].title;
+        // display the reformatted date
+        date.textContent = format(new Date(tasks[task].date), "dd/MM/yyyy");
+        description.textContent = tasks[task].description;
+        priority.textContent = tasks[task].priority;
+        editBtn.textContent = "Edit";
         deleteBtn.textContent = "Delete";
 
+        // append the elements
         taskList.appendChild(li);
         li.appendChild(taskItem);
         taskItem.append(checkBox, taskTitle, description, priority, date, editBtn, deleteBtn);
     };
 };
 
+// handles displaying the project list on the sidebar
 const displayProjectList = () => {
+
     //clearing the DOM
     projectList.replaceChildren();
 
-    // get a list of projects
+    // get an array of projects
     let projects = Object.keys(myProjects);
 
-    // create the project list on the side bar
-    projects.forEach((p, index) => {
+    // for each project on the myProjects
+    projects.forEach((p) => {
+        // create a button for the project and for removing the project
         const listItem = document.createElement("button");
         const removeProject = document.createElement("button");
+
+        // create a container that will hold both buttons
         const buttonsDiv = document.createElement("div");
 
+        // set the textContent for both buttons
         listItem.textContent = p;
         removeProject.textContent = "Remove";
+
+        // set the class for the remove button
         removeProject.classList.add = "project-remove-btn";
 
+        // if it's not the default project (inbox)
         if(listItem.textContent !== "Inbox") {
+            // append both buttons to the button container
             buttonsDiv.append(listItem, removeProject);
-
+            
+            // event listener for the remove button
             removeProject.addEventListener("click", () => {
                 const nameOfProjectToBeRemoved = listItem.textContent;
-                pubsub.publish("projectDeleted", nameOfProjectToBeRemoved)
+
+                // send the project name to the deleteProject function
+                pubsub.publish("projectDeleted", nameOfProjectToBeRemoved);
+
+                // reset the current view to inbox
+                selectedProject = "Inbox";
+                pubsub.publish("myProjectsUpdated", myProjects);
             });
-    
+
+            // append the button container to the list
             projectList.appendChild(buttonsDiv);
         }
+        // if it's the default project then just append it to the list
         else projectList.appendChild(listItem);
+
         // event listener to change the selected project
         listItem.addEventListener("click", (e) => {
             e.preventDefault();
@@ -185,6 +232,7 @@ const displayProjectList = () => {
     });
 };
 
+// handle the the dropdown menu on the task form
 const addProjectsToDropdownList = () => {
     const selectElm = document.querySelector("#project");
     selectElm.replaceChildren()
@@ -193,15 +241,13 @@ const addProjectsToDropdownList = () => {
         const option =  document.createElement("option");
         option.textContent = pName;
         option.value = pName;
-        console.log(option);
         if(option.value == "inbox") option.selected = selected;
         selectElm.appendChild(option);
     });
 };
 
-// click listener for delete and edit buttons and all events inside current-view
+// click listener for delete and edit buttons and checkbox
 document.querySelector(".current-view").addEventListener("click", (e) => {
-    console.log(e.target);
     // delete button handler
     if(e.target.className === "task-delete-btn") {
         // send the task index to deleteTask
@@ -223,11 +269,12 @@ document.querySelector(".current-view").addEventListener("click", (e) => {
         document.getElementById("priority").value = myTasks[taskIndex].priority;
         document.getElementById("do-date").value = myTasks[taskIndex].date;
 
-        // hide the confirm button that submits the form and show the edit button
+        // hide the confirm button that creates a new task and show the edit button
         taskFormConfirmBtn.style.display = "none";
         editTask.style.display = "block";
     };
 
+    // handle the checkbox styling
     if(e.target.type == "checkbox" && e.target.checked) {
         e.target.closest(".task-item").style.textDecoration = "line-through";
         e.target.closest(".task-item").style.opacity = "0.5";
@@ -235,11 +282,10 @@ document.querySelector(".current-view").addEventListener("click", (e) => {
     else if(e.target.type == "checkbox" && !e.target.checked){
         e.target.closest(".task-item").style.textDecoration = "none";
         e.target.closest(".task-item").style.opacity = "1";
-    }
-
+    };
 });
 
-
-pubsub.subscribe("ListsUpdated", displayProjectList);
-pubsub.subscribe("ListsUpdated", displayTasks);
-pubsub.subscribe("ListsUpdated", addProjectsToDropdownList);
+// these functions will be called every time listsUpdated is published
+pubsub.subscribe("listsUpdated", displayProjectList);
+pubsub.subscribe("listsUpdated", displayTasks);
+pubsub.subscribe("listsUpdated", addProjectsToDropdownList);
