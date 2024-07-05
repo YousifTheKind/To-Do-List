@@ -87,8 +87,13 @@ editTask.addEventListener("click", (e) => {
 projectFrom.addEventListener("submit", (e) => {
     e.preventDefault();
     const title = document.getElementById("projectTitle").value;
-    pubsub.publish("projectRecived", title);
-    projectDialog.close();
+    if(myProjects.hasOwnProperty(title)) {
+        alert("Project Already Exists!");
+    }
+    else {
+        pubsub.publish("projectRecived", title);
+        projectDialog.close();
+    };
 });
 
 
@@ -151,11 +156,26 @@ const displayProjectList = () => {
     let projects = Object.keys(myProjects);
 
     // create the project list on the side bar
-    projects.forEach((p) => {
+    projects.forEach((p, index) => {
         const listItem = document.createElement("button");
-        listItem.textContent = p;
-        projectList.appendChild(listItem);
+        const removeProject = document.createElement("button");
+        const buttonsDiv = document.createElement("div");
 
+        listItem.textContent = p;
+        removeProject.textContent = "Remove";
+        removeProject.classList.add = "project-remove-btn";
+
+        if(listItem.textContent !== "Inbox") {
+            buttonsDiv.append(listItem, removeProject);
+
+            removeProject.addEventListener("click", () => {
+                const nameOfProjectToBeRemoved = listItem.textContent;
+                pubsub.publish("projectDeleted", nameOfProjectToBeRemoved)
+            });
+    
+            projectList.appendChild(buttonsDiv);
+        }
+        else projectList.appendChild(listItem);
         // event listener to change the selected project
         listItem.addEventListener("click", (e) => {
             e.preventDefault();

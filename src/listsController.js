@@ -35,7 +35,10 @@ const deleteTask = (taskIndex) => {
     myTasks.splice(taskIndex, 1);
     pubsub.publish("myTasksUpdated");
 };
-
+const deleteProject = (name) => {
+    delete myProjects[name];
+    pubsub.publish("myProjectsUpdated");
+};
 const editTask = (editedTaskObj, taskIndex) => {
     Object.assign(myTasks[taskIndex], editedTaskObj);
     pubsub.publish("myTasksUpdated");
@@ -44,5 +47,6 @@ const editTask = (editedTaskObj, taskIndex) => {
 pubsub.subscribe("myProjectsUpdated" , updateLists);
 pubsub.subscribe("myTasksUpdated" , updateLists);
 pubsub.subscribe("taskEdited", editTask);
-pubsub.subscribe("taskDeleted", deleteTask)
+pubsub.subscribe("taskDeleted", deleteTask);
+pubsub.subscribe("projectDeleted", deleteProject);
 

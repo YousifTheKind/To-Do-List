@@ -41,6 +41,16 @@
     min-height: 34px;
     margin-right: 20px;
 }
+.project-list div {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: 3fr 1fr;
+    min-height: 34px;
+    max-width: 240px;
+}
+.project-list div > button:nth-child(2) {
+    margin-right: 0;
+}
 .my-projects {
     display: flex;
     margin-left: 20px;
