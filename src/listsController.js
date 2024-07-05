@@ -20,6 +20,8 @@ const updateLists = () => {
         };
     };
     pubsub.publish("ListsUpdated");
+    console.log(myTasks);
+    console.log(myProjects);
 };
 
 const changePriority = (task, newPriority) => {
@@ -35,12 +37,12 @@ const deleteTask = (taskIndex) => {
 };
 
 const editTask = (editedTaskObj, taskIndex) => {
-    console.log("doing stuff");
     Object.assign(myTasks[taskIndex], editedTaskObj);
     pubsub.publish("myTasksUpdated");
 };
 
-pubsub.subscribe("taskDeleted", deleteTask)
 pubsub.subscribe("myProjectsUpdated" , updateLists);
 pubsub.subscribe("myTasksUpdated" , updateLists);
 pubsub.subscribe("taskEdited", editTask);
+pubsub.subscribe("taskDeleted", deleteTask)
+

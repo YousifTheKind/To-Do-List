@@ -1,7 +1,7 @@
 import { pubsub } from "./pubsub";
 import { format } from "date-fns";
 import { myProjects, myTasks } from "./create";
-
+export { displayProjectList, addProjectsToDropdownList }
 const taskDialog = document.querySelector(".task-dialog");
 const projectDialog = document.querySelector(".project-dialog");
 const addTaskBtn = document.querySelector(".add-task");
@@ -173,6 +173,7 @@ const addProjectsToDropdownList = () => {
         const option =  document.createElement("option");
         option.textContent = pName;
         option.value = pName;
+        console.log(option);
         if(option.value == "inbox") option.selected = selected;
         selectElm.appendChild(option);
     });

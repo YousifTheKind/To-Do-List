@@ -1,8 +1,9 @@
 import { pubsub } from "./pubsub";
 export { createTask, createProject, myTasks, myProjects };
 const myTasks = [];
-const myProjects = {};
-
+const myProjects = {
+    "Inbox": [],
+};
 
 const createTask = (title, description, date, priority, project) => {
     const newTask = {

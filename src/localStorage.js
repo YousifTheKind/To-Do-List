@@ -1,5 +1,8 @@
 import { pubsub } from "./pubsub";
-import {  } from "./listsController";
+import { myProjects, myTasks } from "./create";
+export { getFromLocalStorage };
+
+// making sure that storage is available
 function storageAvailable(type) {
     let storage;
     try {
@@ -19,12 +22,24 @@ function storageAvailable(type) {
     }
   }
 
-  if (storageAvailable("localStorage")) {
-    const saveToLocalStorage = (myProjects, myTasks) => {
-
+const saveToLocalStorage = () => {
+    if (storageAvailable("localStorage")) {
+        localStorage.setItem("myTasks", JSON.stringify(myTasks));
+        localStorage.setItem("myProjects", JSON.stringify(myProjects));
+    } 
+    else {
+        alert("something went wrong!");
     };
-    pubsub.subscribe("listsUpdated", saveToLocalStorage);
-  } else {
-    alert("something went wrong!");
-  };
-  
+};
+
+const getFromLocalStorage = () => {
+    if(localStorage.getItem("myProjects") && localStorage.getItem("myTasks")) {
+        const savedProjects = JSON.parse(localStorage.getItem("myProjects"));
+        const savedTasks = JSON.parse(localStorage.getItem("myTasks"));
+        console.log(savedProjects);
+        Object.assign(myProjects, savedProjects);
+        Object.assign(myTasks, savedTasks);
+        pubsub.publish("ListsUpdated");
+    }
+};
+pubsub.subscribe("ListsUpdated", saveToLocalStorage);
